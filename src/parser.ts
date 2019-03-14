@@ -142,6 +142,14 @@ function parseNonLiteral(
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
         type: 'OBJECT'
       })
+    case 'OBJECTID':
+      options.has_objectid = true;
+      return set({
+        comment: schema.description,
+        keyName: keyName,
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        type: 'OBJECTID'
+      });
     case 'ONE_OF':
       return set({
         comment: schema.description,
@@ -236,7 +244,7 @@ function newInterface(
     params: parseSchema(schema, options, rootSchema, processed, usedNames, name),
     standaloneName: name,
     superTypes: parseSuperTypes(schema, options, processed, usedNames),
-    type: 'INTERFACE'
+    type: 'INTERFACE',
   }
 }
 

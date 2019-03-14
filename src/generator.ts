@@ -156,6 +156,7 @@ function generateType(ast: AST, options: Options): string {
     case 'NUMBER': return 'number'
     case 'NULL': return 'null'
     case 'OBJECT': return 'object'
+    case 'OBJECTID': return 'ObjectID'
     case 'REFERENCE': return ast.params
     case 'STRING': return 'string'
     case 'TUPLE': return '['
@@ -179,7 +180,13 @@ function generateInterface(
   ast: TInterface,
   options: Options
 ): string {
-  return `{`
+
+  var addition = '';
+  // if(options.has_objectid) {
+  //   addition = '<T>';
+  // }
+
+  const ret =  `{`
     + '\n'
     + ast.params
       .filter(_ => !_.isPatternProperty && !_.isUnreachableDefinition)
@@ -189,11 +196,13 @@ function generateInterface(
         + escapeKeyName(keyName)
         + (isRequired ? '' : '?')
         + ': '
-        + (hasStandaloneName(ast) ? toSafeString(type) : type)
+        + (hasStandaloneName(ast) ? toSafeString(type) + addition : type)
       )
       .join('\n')
     + '\n'
-    + '}'
+    + '}';
+
+  return ret;
 }
 
 function generateComment(comment: string): string {
@@ -218,7 +227,8 @@ function generateStandaloneEnum(ast: TEnum, options: Options): string {
 
 function generateStandaloneInterface(ast: TNamedInterface, options: Options): string {
   return (hasComment(ast) ? generateComment(ast.comment) + '\n' : '')
-    + `export interface ${toSafeString(ast.standaloneName)} `
+    + `export interface ${toSafeString(ast.standaloneName)}`
+    // + (options.has_objectid === true ? "<T> " : " ")
     + (ast.superTypes.length > 0 ? `extends ${ast.superTypes.map(superType => toSafeString(superType.standaloneName)).join(', ')} ` : '')
     + generateInterface(ast, options)
 }

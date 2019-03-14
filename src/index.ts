@@ -43,7 +43,9 @@ export interface Options {
   /**
    * [$RefParser](https://github.com/BigstickCarpet/json-schema-ref-parser) Options, used when resolving `$ref`s
    */
-  $refOptions: $RefOptions
+  $refOptions: $RefOptions,
+
+  has_objectid: boolean;
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -66,7 +68,8 @@ export const DEFAULT_OPTIONS: Options = {
     useTabs: false
   },
   unreachableDefinitions: false,
-  $refOptions: {}
+  $refOptions: {},
+  has_objectid: false
 }
 
 export function compileFromFile(
@@ -93,8 +96,8 @@ export async function compile(
   name: string,
   options: Partial<Options> = {}
 ): Promise<string> {
-
   const _options = merge({}, DEFAULT_OPTIONS, options)
+  _options.has_objectid = false;
 
   const errors = validate(schema, name)
   if (errors.length) {
